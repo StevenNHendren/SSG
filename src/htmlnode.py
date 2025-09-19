@@ -25,14 +25,26 @@ class HTMLNode():
             retstring.append(f"children: {len(self.children)} members\n")
         if self.props == None:
             retstring.append("props: None\n")
-        else: 
+        else:
             retstring.append(f"props: {self.props}\n")
         return retstring
 
     def props_to_html(self):
         ret = ""
-        for k, v in props.items():
+        if self.props == None:
+            return ret
+        for k, v in self.props.items():
             ret.append(f" {k} {v}\n")
         return ret
 
+class LeafNode(HTMLNode):
 
+    def __init__(self, tag, value, props: None):
+        super.__init__(tag, value, None, props)
+
+    def to_html(self):
+        if self.vaue == None:
+            raise ValueError
+        if self.tag == None:
+           return self.value
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
