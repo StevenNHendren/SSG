@@ -14,8 +14,8 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is another text node", TextType.BOLD)
         self.assertNotEqual(node, node2)
     def test_url_eq(self):
-        node = TextNode("This is a text node", TextType.PLAIN, "http:\\git.com")
-        node2 = TextNode("This is a text node", TextType.PLAIN, "http:\\git.com")
+        node = TextNode("This is a text node", TextType.TEXT, "http:\\git.com")
+        node2 = TextNode("This is a text node", TextType.TEXT, "http:\\git.com")
         self.assertEqual(node, node2)
     def test_url_neq(self):
         node = TextNode("This is another text node", TextType.CODE, "http:\\git.com")
@@ -23,10 +23,10 @@ class TestTextNode(unittest.TestCase):
         self.assertNotEqual(node, node2)
     def test_type_neq(self):
         node = TextNode("Some node or another", TextType.ITALIC)
-        node2 = TextNode("Some node or another", TextType.PLAIN)
+        node2 = TextNode("Some node or another", TextType.TEXT)
         self.assertNotEqual(node, node2)
     def test_text(self):
-        node = TextNode("This is a text node", TextType.PLAIN)
+        node = TextNode("This is a text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         self.assertEqual(html_node.value, "This is a text node")

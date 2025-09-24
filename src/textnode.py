@@ -7,7 +7,7 @@ def text_node_to_html_node(text_node):
     if not text_node.text_type in TextType:
         raise Exception("invalid TextType")
     match text_node.text_type:
-        case TextType.PLAIN:
+        case TextType.TEXT:
             return LeafNode(None, text_node.text)
         case TextType.BOLD:
             return LeafNode("b", text_node.text)
@@ -20,9 +20,37 @@ def text_node_to_html_node(text_node):
         case TextType.IMAGE:
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
 
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.TEXT:
+            n = node.text.count(delimiter)
+            #print(f"Delimiter count: {n}")
+            if n == 0:
+                new_nodes.append(node)
+            elif n == 2:
+                split_list = []
+                split_nodes = []
+                split_list = node.text.split(delimiter)
+                if len(split_list[0]) > 0:
+                    split_nodes.append(TextNode(split_list[0], TextType.TEXT))
+                if len(split_list[1]) > 0:
+                    split_nodes.append(TextNode(split_list[1], text_type))
+                if len(split_list[2]) > 0:
+                    split_nodes.append(TextNode(split_list[2], TextType.TEXT))
+                if len(split_nodes) > 0:
+                    new_nodes.extend(split_nodes)
+            elif n % 2 > 0:
+                raise Exception("Closing delimiter not found")
+            else:
+                raise Exception("Node contains more than one inline element")
+        else:
+            new_nodes.append(node)
+    return new_nodes
+
 
 class TextType(Enum):
-    PLAIN = "text (plain)"
+    TEXT = "text (plain)"
     BOLD = "**Bold text**"
     ITALIC = "_Italic text_"
     CODE = "`Code text`"
