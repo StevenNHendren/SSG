@@ -1,5 +1,14 @@
+import re
 from enum import Enum
 from htmlnode import *
+
+def extract_markdown_images(text):
+    matches = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return matches
+
+def extract_markdown_links(text):
+    matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return matches
 
 def text_node_to_html_node(text_node):
     if text_node.text_type == None:
@@ -48,6 +57,25 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             new_nodes.append(node)
     return new_nodes
 
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.TEXT:
+            matches =  extract_markdown_images(node.text)
+            if matches == None or len(matches) == 0:
+                new_nodes.append(node)
+            else:
+                if len(matches) == 1:
+                    image_alt, image_link = matches[0]
+                    sections = node.text.split(f"![{image_alt}]({image_link})", 1)
+                    if sections[0] != "":
+                        new_nodes.append(TextNode(section[0], TextType.TEXT))
+                    new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
+                    
+                    
+
+def split_nodes_link(old_nodes):
+    pass
 
 class TextType(Enum):
     TEXT = "text (plain)"
